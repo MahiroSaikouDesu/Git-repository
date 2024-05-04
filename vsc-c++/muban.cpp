@@ -3,7 +3,8 @@ using namespace std;
 #define ll long long
 #define fi first
 #define se second
-typedef pair<int, int> P;
+typedef pair<int, int> PII;
+typedef pair<ll, ll> PLL;
 int read()
 {
     int sum = 0, f = 1;
