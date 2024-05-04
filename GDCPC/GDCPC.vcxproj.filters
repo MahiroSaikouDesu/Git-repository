@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="资源文件\2023">
+      <UniqueIdentifier>{b9dcd4f3-c2b5-4770-89bc-0d7371c4b741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\temp">
+      <UniqueIdentifier>{7d568a4f-395f-4e54-8a0b-cbe40dd3a86b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\prat">
+      <UniqueIdentifier>{21b175df-0d70-4337-b2a3-3178505c1d5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\prat\round165">
+      <UniqueIdentifier>{7809605e-48c2-4791-8f41-0d39eeeca940}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\LGR-185">
+      <UniqueIdentifier>{e29f1371-7f52-44a0-834e-02a4dd453f9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\prat\round943">
+      <UniqueIdentifier>{dc0784cd-0dcb-4291-8fcf-28b369b2cf99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\prat\abc351">
+      <UniqueIdentifier>{8d135325-7418-46ca-97d2-9377a938efe7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="a.cpp">
+      <Filter>资源文件\2023</Filter>
+    </ClCompile>
+    <ClCompile Include="c.cpp">
+      <Filter>资源文件\2023</Filter>
+    </ClCompile>
+    <ClCompile Include="c-vector.cpp">
+      <Filter>资源文件\2023</Filter>
+    </ClCompile>
+    <ClCompile Include="d-wa-dp.cpp">
+      <Filter>资源文件\2023</Filter>
+    </ClCompile>
+    <ClCompile Include="k.cpp">
+      <Filter>资源文件\2023</Filter>
+    </ClCompile>
+    <ClCompile Include="I.cpp">
+      <Filter>资源文件\2023</Filter>
+    </ClCompile>
+    <ClCompile Include="源.cpp">
+      <Filter>资源文件\temp</Filter>
+    </ClCompile>
+    <ClCompile Include="d.cpp">
+      <Filter>资源文件\2023</Filter>
+    </ClCompile>
+    <ClCompile Include="165-a.cpp">
+      <Filter>资源文件\prat\round165</Filter>
+    </ClCompile>
+    <ClCompile Include="165-b.cpp">
+      <Filter>资源文件\prat\round165</Filter>
+    </ClCompile>
+    <ClCompile Include="165=c.cpp">
+      <Filter>资源文件\prat\round165</Filter>
+    </ClCompile>
+    <ClCompile Include="lgr185-a.cpp">
+      <Filter>资源文件\LGR-185</Filter>
+    </ClCompile>
+    <ClCompile Include="lgr185-b.cpp">
+      <Filter>资源文件\LGR-185</Filter>
+    </ClCompile>
+    <ClCompile Include="943-a.cpp">
+      <Filter>资源文件\prat\round943</Filter>
+    </ClCompile>
+    <ClCompile Include="943-b.cpp">
+      <Filter>资源文件\prat\round943</Filter>
+    </ClCompile>
+    <ClCompile Include="943-c.cpp">
+      <Filter>资源文件\prat\round943</Filter>
+    </ClCompile>
+    <ClCompile Include="943-d.cpp">
+      <Filter>资源文件\prat\round943</Filter>
+    </ClCompile>
+    <ClCompile Include="943-d-se.cpp">
+      <Filter>资源文件\prat\round943</Filter>
+    </ClCompile>
+    <ClCompile Include="abc351-a.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+    <ClCompile Include="abc351-b.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+    <ClCompile Include="abd351-d-dfs.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+    <ClCompile Include="abc351-d.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+    <ClCompile Include="abv351-c.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+    <ClCompile Include="abc351-e.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+    <ClCompile Include="abc351-e-qian.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+    <ClCompile Include="abc351-f.cpp">
+      <Filter>资源文件\prat\abc351</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
