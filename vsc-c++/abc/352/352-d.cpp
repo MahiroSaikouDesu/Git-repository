@@ -39,9 +39,11 @@ int main()
         pi[i] = read();
         p[pi[i]].v.push_back(i);
     }
-    for (int i = 1; i + k <= n; i++)
+    int i = 1;
+    while(i + k <= n)
     {
-        int cnt = 0;
+        int cnt = 1;
+        // check whether legal
         for (int j = i; j <= n; j++)
         {
             if (p[j].v.empty())
@@ -51,10 +53,11 @@ int main()
                 break;
         }
         if (cnt < k)
-            i += cnt - 1;
+            i += cnt;
         else
         {
             ans = max(ans, dps(i));
+            i++;
         }
     }
     return 0;
