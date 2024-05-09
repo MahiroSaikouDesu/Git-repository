@@ -41,6 +41,5 @@ public class BandBooster {
             System.out.println(p2);
         }
         
-        input.close();
 	}
 }
