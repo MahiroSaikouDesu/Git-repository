@@ -22,24 +22,25 @@ public class BandBooster {
     }
 
     public static void main(String[] args) {
-		Scanner input = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
         String name1 = input.next(), name2 = input.next();
-        
-		BandBooster p1 = new BandBooster(name1);
+
+        BandBooster p1 = new BandBooster(name1);
         BandBooster p2 = new BandBooster(name2);
-        
+
         for (int i = 1; i <= 3; i++) {
-			System.out.println("Enter " + p1.getName() + "'s No." + i + "sales");
-			p1.updateSales(input.nextInt());
-			System.out.println(p1);
-		}
+            System.out.println("Enter " + p1.getName() + "'s No." + i + "sales");
+            p1.updateSales(input.nextInt());
+            System.out.println(p1);
+        }
         System.out.println();
-        
+
         for (int i = 1; i <= 3; i++) {
             System.out.println("Enter " + p2.getName() + "'s No." + i + "sales");
             p2.updateSales(input.nextInt());
             System.out.println(p2);
         }
-        
-	}
+
+        input.close();
+    }
 }
