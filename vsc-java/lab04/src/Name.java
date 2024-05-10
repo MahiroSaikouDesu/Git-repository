@@ -32,7 +32,7 @@ public class Name {
     }
 
     public boolean equals(Name otherName) {
-        if (firstMiddleLast().equalsIgnoreCase(otherName.firstName))
+        if (firstMiddleLast().equalsIgnoreCase(otherName.firstMiddleLast()))
             return true;
         else
             return false;
