@@ -67,9 +67,9 @@ public class Name {
         System.out.println(name2);
 
         System.out.print("These names are ");
-        if(name1.equals(name2) == false)
+        if (name1.equals(name2) == false)
             System.out.print("not ");
-        System.out.println("the same names");
+        System.out.println("the same names.");
 
         scan.close();
     }
