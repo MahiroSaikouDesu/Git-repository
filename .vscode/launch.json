@@ -1,6 +1,12 @@
 {
     "configurations": [
-        
+        {
+            "type": "java",
+            "name": "RollingDice",
+            "request": "launch",
+            "mainClass": "RollingDice",
+            "projectName": "Git-repository_946c8e1a"
+        },
         {
             "name": "C/C++: g++.exe 生成和调试活动文件",
             "type": "cppdbg",
