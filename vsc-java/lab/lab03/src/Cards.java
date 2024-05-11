@@ -1,3 +1,8 @@
+
+/****************************************
+ *  Playing With Cards || P47
+ *  Cards.java
+ ****************************************/
 import java.util.Scanner;
 
 enum Rank {

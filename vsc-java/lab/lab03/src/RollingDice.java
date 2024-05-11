@@ -1,3 +1,8 @@
+
+/******************************
+ * Rolling Dice || P43
+ * RollingDice.java
+ ******************************/
 import java.util.Random;
 
 public class RollingDice {

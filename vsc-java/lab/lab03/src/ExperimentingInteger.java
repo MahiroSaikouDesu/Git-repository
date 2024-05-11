@@ -1,3 +1,9 @@
+
+/*********************************
+ * Experimenting with the Integer Class || P48
+ * ExperimentingInteger.java
+ *********************************/
+
 import java.util.Scanner;
 
 public class ExperimentingInteger {
@@ -17,7 +23,7 @@ public class ExperimentingInteger {
         final int minimumInteger = Integer.MIN_VALUE;
         System.out.println("the maximum possible Java integer values: " + maximumInteger);
         System.out.println("the minimum possible Java integer values: " + minimumInteger);
-        
+
         System.out.println("Input two integer(Using next method):");
         String val1 = input.next(), val2 = input.next();
         System.out.println("Sum: " + (Integer.parseInt(val1) + Integer.parseInt(val2)));
