@@ -14,7 +14,10 @@
             "compilerPath": "D:/launage/mingw64/bin/g++.exe",
             "cStandard": "c23",
             "cppStandard": "c++23",
-            "intelliSenseMode": "gcc-x64"
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [
+                "-lwsock32"
+            ]
         }
     ],
     "version": 4

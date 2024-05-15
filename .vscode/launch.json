@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ran",
+            "request": "launch",
+            "mainClass": "ran",
+            "projectName": "Git-repository_530459d5"
+        },
+        {
+            "type": "java",
             "name": "RollingDice",
             "request": "launch",
             "mainClass": "RollingDice",

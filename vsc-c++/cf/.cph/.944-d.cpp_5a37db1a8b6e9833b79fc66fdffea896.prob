@@ -1,0 +1,1 @@
+{"name":"Local: 944-d","url":"e:\\pressure\\Git-repository\\vsc-c++\\cf\\944-d.cpp","tests":[{"id":1715357364838,"input":"6\n11010\n00000000\n1\n10\n0001111\n0110\n","output":"3\n1\n1\n2\n1\n2\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\pressure\\Git-repository\\vsc-c++\\cf\\944-d.cpp","group":"local","local":true}

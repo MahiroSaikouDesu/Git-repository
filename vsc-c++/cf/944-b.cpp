@@ -26,11 +26,23 @@ int read()
 int main()
 {
     int n = read();
-    while(n--){
-        int a = read(), b = read();
-        if(a>b)
-            swap(a, b);
-        cout << a << ' ' << b;
+    while (n--)
+    {
+        string tmp;
+        cin >> tmp;
+        int flag = 1;
+        for (int i = 1; i < tmp.size(); i++)
+            if (tmp[i] != tmp[0])
+            {
+                flag = 0;
+                cout << "YES\n";
+                swap(tmp[i], tmp[0]);
+                cout << tmp << '\n';
+                break;
+            }
+
+        if (flag)
+            cout << "NO\n";
     }
     return 0;
 }
