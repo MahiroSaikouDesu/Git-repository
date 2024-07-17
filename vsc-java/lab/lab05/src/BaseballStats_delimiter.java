@@ -60,3 +60,5 @@ public class BaseballStats_delimiter {
 		fileScan.close();
 	}
 }
+
+// C:\Users\foxan\Desktop\st.dat

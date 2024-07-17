@@ -2,6 +2,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Shop",
+            "request": "launch",
+            "mainClass": "Shop",
+            "projectName": "Git-repository_530459d5"
+        },
+        {
+            "type": "java",
+            "name": "BaseballStats_delimiter",
+            "request": "launch",
+            "mainClass": "BaseballStats_delimiter",
+            "projectName": "Git-repository_530459d5"
+        },
+        {
+            "type": "java",
+            "name": "Name",
+            "request": "launch",
+            "mainClass": "Name",
+            "projectName": "Git-repository_530459d5"
+        },
+        {
+            "type": "java",
+            "name": "BandBooster",
+            "request": "launch",
+            "mainClass": "BandBooster",
+            "projectName": "Git-repository_530459d5"
+        },
+        {
+            "type": "java",
             "name": "ran",
             "request": "launch",
             "mainClass": "ran",

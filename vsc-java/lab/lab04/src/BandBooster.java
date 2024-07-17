@@ -1,3 +1,9 @@
+
+/////////////////////////////
+//
+//  P58 Band Booster Class
+//  
+/////////////////////////////
 import java.util.Scanner;
 
 public class BandBooster {

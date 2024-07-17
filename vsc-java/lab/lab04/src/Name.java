@@ -1,3 +1,9 @@
+/////////////////////////////
+//
+//  P59 Representing Names
+//  
+/////////////////////////////
+
 import java.util.Scanner;
 
 public class Name {
