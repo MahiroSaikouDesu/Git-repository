@@ -1,3 +1,4 @@
+int n;
 int F[N][M];
 void stCreate()
 {
@@ -13,4 +14,16 @@ inline int stQuery(int l, int r)
 {
     int k = log2(r - l + 1);
     return max(F[l][k], F[r - (1 << k) + 1][k]);
+}
+
+void print() // for-testing
+{
+    int k = log2(n);
+    for (int j = 0; j <= k; j++)
+    {
+        cout << "j: " << j << '\n';
+        for (int i = 1; i <= n - (1 << j) + 1; i++)
+            cout << F[i][j] << ' ';
+        cout << '\n';
+    }
 }
