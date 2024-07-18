@@ -1,9 +1,27 @@
 #include <bits/stdc++.h>
 using namespace std;
+inline int read()
+{
+    int x = 0, f = 1;
+    char ch = getchar();
+    while (ch < '0' || ch > '9')
+    {
+        if (ch == '-')
+            f = -1;
+        ch = getchar();
+    }
+    while (ch >= '0' && ch <= '9')
+    {
+        x = (x << 1) + (x << 3) + (ch ^ 48);
+        ch = getchar();
+    }
+    return x * f;
+}
+
 #define ll long long
 typedef pair<int, int> Pii;
 typedef pair<ll, ll> Pll;
-const int N = 100020;
+const int N = 0;
 
 struct node
 {
@@ -12,10 +30,10 @@ struct node
     int num, size;
 } tr[N];
 
-int cnt, root;
-int New(int val)
+int root;
+int New(int val, int cnt)
 {
-    tr[++cnt].val = val;
+    tr[cnt].val = val;
     tr[cnt].pri = rand();
     tr[cnt].num = tr[cnt].size = 1;
     tr[cnt].lc = tr[cnt].rc = 0;
@@ -47,19 +65,16 @@ void zag(int &p) // 左旋
     p = q;
 }
 
-void Insert(int &p, int val)
+void Insert(int &p, int val, int cnt)
 {
     if (!p)
     {
-        p = New(val);
+        p = New(cnt, val);
         return;
     }
-
     tr[p].size++;
-
     if (val == tr[p].val)
         tr[p].num++;
-
     else if (val < tr[p].val)
     {
         Insert(tr[p].lc, val);
@@ -83,10 +98,10 @@ void Delete(int &p, int val)
     {
         if (tr[p].num > 1)
             tr[p].num--;
-        // 当前val只有一个
+
         else if (!tr[p].lc || !tr[p].rc)
             p = tr[p].lc + tr[p].rc;
-        // 当前有两个儿子
+
         else if (tr[tr[p].lc].pri > tr[tr[p].rc].pri)
         {
             zig(p);
@@ -106,14 +121,15 @@ void Delete(int &p, int val)
         Delete(tr[p].rc, val);
 }
 
-int getpre(int val)
+Pii getpre(int val)
 {
-    int p = root, res = 0;
+    int p = root;
+    Pii res = 0;
     while (p)
     {
         if (tr[p].val < val)
         {
-            res = tr[p].val;
+            res = {p, tr[p].val};
             p = tr[p].rc;
         }
         else
@@ -122,91 +138,45 @@ int getpre(int val)
     return res;
 }
 
-int getnext(int val)
+Pii getnext(int val)
 {
-    int p = root, res = 0;
+    int p = root;
+    Pii res = 0;
     while (p)
     {
         if (tr[p].val <= val)
             p = tr[p].rc;
         else
         {
-            res = tr[p].val;
+            res = {p, tr[p].val};
             p = tr[p].lc;
         }
     }
     return res;
 }
 
-int getrank(int p, int val)
-{
-    if (!p)
-        return 0;
-    if (tr[p].val == val)
-        return tr[tr[p].lc].size + 1;
-    else if (tr[p].val < val)
-        return getrank(tr[p].rc, val) + tr[p].num + tr[tr[p].lc].size;
-    else
-        return getrank(tr[p].lc, val);
-}
-
-int getval(int p, int rank)
-{
-    if (!p)
-        return 0;
-    if (tr[tr[p].lc].size >= rank)
-        return getval(tr[p].lc, rank);
-    if (tr[tr[p].lc].size + tr[p].num >= rank)
-        return tr[p].val;
-    return getval(tr[p].rc, rank - tr[tr[p].lc].size - tr[p].num);
-}
-
 signed main()
 {
     ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int n;
-    cin >> n;
-    while (n--)
+    Insert(root, (int)1e9, 1);
+    int n = read();
+    for (int i = 1; i <= n; i++)
     {
-        int opt, x;
-        cin >> opt >> x;
-        switch (opt)
+        int k = read(), g = read();
+        cout << k << ' ';
+        Insert(root, g, k);
+        Pii left = getpre(root, k), right = getnext(root, k);
+        if (!left.first || !!right.first)
         {
-        case 1:
-        {
-            Insert(root, x);
-            break;
+            cout << left.first + right.first << '\n';
         }
-
-        case 2:
+        else
         {
-            Delete(root, x);
-            break;
-        }
-
-        case 3:
-        {
-            cout << getrank(root, x) << '\n';
-            break;
-        }
-
-        case 4:
-        {
-            cout << getval(root, x) << '\n';
-            break;
-        }
-
-        case 5:
-        {
-            cout << getpre(x) << '\n';
-            break;
-        }
-
-        case 6:
-        {
-            cout << getnext(x) << '\n';
-            break;
-        }
+            Pii tmp;
+            if (g - left.second < right.second - g)
+                cout << left.first << '\n';
+            else
+                cout << right.first << '\n';
         }
     }
     return 0;
