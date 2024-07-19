@@ -26,8 +26,8 @@ const int N = 2e5 + 10;
 // 辗转相除法
 int gcd(int a, int b)
 {
-    if (a % b == 0)
-        return b;
+    if (!b)
+        return a;
     else
         return gcd(b, a % b);
 }
@@ -38,6 +38,13 @@ struct node
 {
     int mx, l, r, lz;
 } tree[N << 2];
+void pushup(int p)
+{
+    tree[p].mx = max(tree[p << 1].mx, tree[p << 1 | 1].mx);
+    tree[p].lz = (tree[p << 1].lz == tree[p << 1 | 1].lz && tree[p << 1].lz != -1) ? tree[p << 1].lz : -1;
+    if (tree[p].lz != -1)
+        tree[p].mx = tree[p].lz;
+}
 void build(int k, int l, int r)
 {
     tree[k].l = l;
@@ -54,7 +61,7 @@ void build(int k, int l, int r)
     rc = lc + 1;
     build(lc, l, mid);
     build(rc, mid + 1, r);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
+    pushup(k);
 }
 inline void lazy(int k, int v)
 {
@@ -84,7 +91,7 @@ void update1(int k, int l, int r, int v) // a[l-r] = v;
         update1(lc, l, r, v);
     if (r > mid)
         update1(rc, l, r, v);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
+    pushup(k);
 }
 void update2(int k, int l, int r, int v) // gcd
 {
@@ -108,9 +115,8 @@ void update2(int k, int l, int r, int v) // gcd
         update2(lc, l, r, v);
     if (r > mid)
         update2(rc, l, r, v);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
+    pushup(k);
 }
-
 void print(int k, int l, int r)
 {
     if (l == r)
