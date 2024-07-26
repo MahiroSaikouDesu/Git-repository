@@ -16,7 +16,7 @@ void build(int k, int l, int r)
     int mid, lc, rc;
     mid = (l + r) >> 1;
     lc = k << 1;
-    rc = lc + 1;
+    rc = lc | 1;
     build(lc, l, mid);
     build(rc, mid + 1, r);
     tree[k].mx = max(tree[lc].mx, tree[rc].mx);

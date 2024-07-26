@@ -1,151 +1,109 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <algorithm>
 using namespace std;
-inline int read()
-{
-    int x = 0, f = 1;
-    char ch = getchar();
-    while (ch < '0' || ch > '9')
-    {
-        if (ch == '-')
-            f = -1;
-        ch = getchar();
-    }
-    while (ch >= '0' && ch <= '9')
-    {
-        x = (x << 1) + (x << 3) + (ch ^ 48);
-        ch = getchar();
-    }
-    return x * f;
-}
 
-#define ll long long
-typedef pair<int, int> Pii;
-typedef pair<ll, ll> Pll;
-const int N = 2e5 + 10;
-
-// 辗转相除法
-int gcd(int a, int b)
-{
-    if (a % b == 0)
-        return b;
-    else
-        return gcd(b, a % b);
-}
-
-int n;
-const int inf = 0x3f3f3f3f << 1;
+const int N = 10005;
+const int INF = 10000005;
 struct node
 {
-    int mx, l, r, lz;
-} tree[N << 2];
-void build(int k, int l, int r)
-{
-    tree[k].l = l;
-    tree[k].r = r;
-    tree[k].lz = -1;
-    if (l == r)
-    {
-        tree[k].mx = tree[k].lz = read();
-        return;
-    }
-    int mid, lc, rc;
-    mid = (l + r) >> 1;
-    lc = k << 1;
-    rc = lc + 1;
-    build(lc, l, mid);
-    build(rc, mid + 1, r);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
-}
-inline void lazy(int k, int v)
-{
-    tree[k].mx = tree[k].lz = v;
-}
-void pushdown(int k)
-{
-    int tmp = k << 1;
-    lazy(tmp, tree[k].lz);
-    lazy(tmp + 1, tree[k].lz);
-    tree[k].lz = -1;
-}
-void update1(int k, int l, int r, int v) // a[l-r] = v;
-{
-    if (l <= tree[k].l && tree[k].r <= r)
-    {
-        lazy(k, v);
-        return;
-    }
-    if (tree[k].lz != -1)
-        pushdown(k);
-    int mid, lc, rc;
-    mid = (tree[k].l + tree[k].r) >> 1;
-    lc = k << 1;
-    rc = lc | 1;
-    if (l <= mid)
-        update1(lc, l, r, v);
-    if (r > mid)
-        update1(rc, l, r, v);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
-}
-void update2(int k, int l, int r, int v) // gcd
-{
-    if (tree[k].mx <= v)
-        return;
-    if (tree[k].lz != -1)
-    {
-        if (l <= tree[k].l && tree[k].r <= r)
-        {
-            lazy(k, gcd(tree[k].lz, v));
-            return;
-        }
-        else
-            pushdown(k);
-    }
-    int mid, lc, rc;
-    mid = (tree[k].l + tree[k].r) >> 1;
-    lc = k << 1;
-    rc = lc | 1;
-    if (l <= mid)
-        update2(lc, l, r, v);
-    if (r > mid)
-        update2(rc, l, r, v);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
-}
+    int v, w, ne;
+} e[N << 1];
+int h[N], idx;                      // 加边
+int del[N], siz[N], mxs, sum, root; // 求根
+int dis[N], d[N], cnt;              // 求距离
+int ans[N];                         // 求路径
+int n, m, ask[N];
 
-void print(int k, int l, int r)
+void add(int u, int v, int w)
 {
-    if (l == r)
-    {
-        cout << tree[k].mx << ' ';
-        return;
-    }
-    if (tree[k].lz != -1)
-        pushdown(k);
-    int mid, lc, rc;
-    mid = (l + r) >> 1;
-    lc = k << 1;
-    rc = lc + 1;
-    print(lc, l, mid);
-    print(rc, mid + 1, r);
+    e[++idx].v = v;
+    e[idx].w = w;
+    e[idx].ne = h[u];
+    h[u] = idx;
 }
-
-signed main()
+void getroot(int u, int fa)
 {
-    int T = read();
-    while (T--)
+    siz[u] = 1;
+    int s = 0;
+    for (int i = h[u]; i; i = e[i].ne)
     {
-        n = read();
-        build(1, 1, n);
-        int Q = read();
-        while (Q--)
+        int v = e[i].v;
+        if (v == fa || del[v])
+            continue;
+        getroot(v, u);
+        siz[u] += siz[v];
+        s = max(s, siz[v]);
+    }
+    s = max(s, sum - siz[u]);
+    if (s < mxs)
+        mxs = s, root = u;
+}
+void getdis(int u, int fa)
+{
+    dis[++cnt] = d[u];
+    for (int i = h[u]; i; i = e[i].ne)
+    {
+        int v = e[i].v;
+        if (v == fa || del[v])
+            continue;
+        d[v] = d[u] + e[i].w;
+        getdis(v, u);
+    }
+}
+void calc(int u, int w, int sign)
+{
+    cnt = 0, d[u] = w;
+    getdis(u, 0); // 求距离
+    sort(dis + 1, dis + cnt + 1);
+    for (int i = 1; i <= m; i++)
+    {
+        int l = 1, r = cnt;
+        while (l < r)
         {
-            int t = read(), l = read(), r = read(), x = read();
-            if (t == 1)
-                update1(1, l, r, x);
+            if (dis[l] + dis[r] <= ask[i])
+            {
+                if (dis[l] + dis[r] == ask[i])
+                    ans[i] += sign;
+                ++l;
+            }
             else
-                update2(1, l, r, x);
+                --r;
         }
-        print(1, 1, n);
-        cout << '\n';
     }
+}
+void divide(int u)
+{
+    calc(u, 0, 1); // 求答案
+    del[u] = 1;
+    for (int i = h[u]; i; i = e[i].ne)
+    {
+        int v = e[i].v;
+        if (del[v])
+            continue;
+        calc(v, e[i].w, -1); // 容斥
+        mxs = sum = siz[v];
+        getroot(v, u); // 求根
+        divide(root);  // 分治
+    }
+}
+int main()
+{
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i < n; ++i)
+    {
+        int u, v, w;
+        scanf("%d%d%d", &u, &v, &w);
+        add(u, v, w);
+        add(v, u, w);
+    }
+    for (int i = 1; i <= m; ++i)
+        scanf("%d", &ask[i]);
+    mxs = sum = n;
+    getroot(1, 0);
+    getroot(root, 0); // 重构siz[]
+    cout << root << '\n';
+    divide(root);
+    for (int i = 1; i <= m; ++i)
+        ans[i] ? puts("AYE") : puts("NAY");
     return 0;
 }
