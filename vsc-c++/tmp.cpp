@@ -1,192 +1,129 @@
 #include <cstdio>
 #include <iostream>
-#include <cstring>
-
+#include <algorithm>
+#include <vector>
 using namespace std;
-
-const int maxn = 1e5 + 10;
-
-struct E
+typedef long long ll;
+const int N = 1e4 + 10;
+struct EDGE
 {
-    int u, v, c;
-    E() {}
-    E(int a, int b, int d) : u(a), v(b), c(d) {}
-};
-
-int n, q, s;
-//  深度      子树大小    父亲  dfs序        重儿子 重链顶端    计数器
-int dep[maxn], siz[maxn], fa[maxn], id[maxn], son[maxn], top[maxn], tot;
-int tre[maxn << 2];
-int val[maxn];
-// 链式前向星
-E edge[maxn];
-int head[maxn], to[maxn << 1], nxt[maxn << 1], tt = 0;
-
-// 树链剖分，第一遍dfs
-// 当前节点，父亲节点
-void dfs0(int now, int fat)
+    int to, d, nex;
+} e[N * 2];
+int n, k, pnum;
+int head[N], len;
+int vis[N];
+int son[N], max_son[N];
+void Init()
 {
-    dep[now] = dep[fat] + 1, siz[now] = 1, fa[now] = fat, son[now] = 0;
-
-    for (int i = head[now]; i != -1; i = nxt[i])
+    for (int i = 0; i <= n; i++)
     {
-        int v = to[i];
-        if (v == fat)
+        head[i] = -1;
+        vis[i] = 0;
+    }
+    len = 0;
+}
+void AddEdge(int x, int y, int z)
+{
+    e[len].to = y;
+    e[len].d = z;
+    e[len].nex = head[x];
+    head[x] = len++;
+}
+void getroot(int u, int fa, int &root, int &minn)
+{
+    son[u] = 1;
+    max_son[u] = 0;
+    int to;
+    for (int i = head[u]; i != -1; i = e[i].nex)
+    {
+        to = e[i].to;
+        if (to == fa || vis[to])
             continue;
-
-        dfs0(v, now);
-        siz[now] += siz[v]; // 更新子树大小
-        if (siz[son[now]] < siz[v])
-            son[now] = v; // 更新重儿子
+        getroot(to, u, root, minn);
+        son[u] += son[to];
+        max_son[u] = max(max_son[u], son[to]);
+    }
+    max_son[u] = max(max_son[u], pnum - son[u]);
+    if (max_son[u] < minn)
+    {
+        minn = max_son[u];
+        root = u;
     }
 }
-
-// 树链剖分，第二遍dfs
-// 当前节点，重链顶端
-void dfs1(int now, int tp)
+vector<int> dis;
+void getdis(int u, int fa, int d)
 {
-    id[now] = ++tot, top[now] = tp;
-
-    // 先搜重儿子
-    if (son[now])
-        dfs1(son[now], tp);
-
-    for (int i = head[now]; i != -1; i = nxt[i])
+    dis.push_back(d);
+    int to;
+    for (int i = head[u]; i != -1; i = e[i].nex)
     {
-        int v = to[i];
-        if (v == fa[now] || v == son[now])
+        to = e[i].to;
+        if (to == fa || vis[to])
             continue;
-        dfs1(v, v);
+        getdis(to, u, d + e[i].d);
     }
 }
-
-void build(int p, int l, int r)
-{
-    if (l == r)
-    {
-        tre[p] = val[l];
-        return;
-    }
-
-    int mid = (l + r) >> 1;
-    build(p << 1, l, mid);
-    build(p << 1 | 1, mid + 1, r);
-
-    tre[p] = tre[p << 1] + tre[p << 1 | 1];
-}
-
-void update(int p, int l, int r, int x, int y) // location +  val
-{
-    if (l == r)
-    {
-        tre[p] = y;
-        return;
-    }
-
-    int mid = (l + r) >> 1;
-    if (x <= mid)
-        update(p << 1, l, mid, x, y);
-    else
-        update(p << 1 | 1, mid + 1, r, x, y);
-
-    tre[p] = tre[p << 1] + tre[p << 1 | 1];
-}
-
-int query(int p, int l, int r, int x, int y)
-{
-    if (x <= l && r <= y)
-        return tre[p];
-
-    int mid = (l + r) >> 1;
-
-    int res = 0;
-    if (x <= mid)
-        res += query(p << 1, l, mid, x, y);
-    if (y > mid)
-        res += query(p << 1 | 1, mid + 1, r, x, y);
-
-    return res;
-}
-
-int get_dis(int u, int v)
+int getnum(int u, int d)
 {
     int res = 0;
-
-    while (top[u] != top[v])
-    { // 不在同一条重链上
-        if (dep[top[u]] < dep[top[v]])
-            swap(u, v);
-
-        res += query(1, 1, n, id[top[u]], id[u]); // 深度大的往上爬
-        u = fa[top[u]];
+    dis.clear();
+    getdis(u, -1, d);
+    sort(dis.begin(), dis.end());
+    int l = dis.size();
+    for (int i = 0; i < l; i++)
+    {
+        if (dis[i] > k)
+            break;
+        res += upper_bound(dis.begin(), dis.end(), k - dis[i]) - lower_bound(dis.begin(), dis.end(), k - dis[i]);
     }
-
-    if (u == v)
-        return res;
-
-    if (dep[u] < dep[v])
-        swap(u, v);
-    res += query(1, 1, n, id[son[v]], id[u]);
-
+    //   cout << u << " " << res << endl;
     return res;
 }
-
-void ins(int f, int t)
+int dfs(int u)
 {
-    to[tt] = t;
-    nxt[tt] = head[f];
-    head[f] = tt;
-    tt++;
+    int minn = N, root;
+    getroot(u, -1, root, minn);
+    vis[root] = 1;
+    int res = 0;
+    res += getnum(root, 0);
+    int to;
+    for (int i = head[root]; i != -1; i = e[i].nex)
+    {
+        to = e[i].to;
+        if (vis[to])
+            continue;
+        pnum = son[to];
+        res -= getnum(to, e[i].d);
+        res += dfs(to);
+    }
+    return res;
 }
-
 int main()
 {
-    // 链式前向星建图
-    memset(head, -1, sizeof head);
-    scanf("%d %d %d", &n, &q, &s);
-
-    for (int i = 1; i <= n - 1; i++)
+    int x, y, z = 1;
+    int res;
+    while (~scanf("%d", &n) && n)
     {
-        int x, y, c;
-        scanf("%d %d %d", &x, &y, &c);
-        edge[i].u = x, edge[i].v = y, edge[i].c = c;
-        ins(x, y);
-        ins(y, x);
-    }
-
-    // 树链剖分两遍dfs
-    dfs0(1, 0);
-    dfs1(1, 1);
-
-    // 把边权分到深度较大的点上
-    for (int i = 1; i <= n - 1; i++)
-    {
-        if (dep[edge[i].u] < dep[edge[i].v])
-            swap(edge[i].u, edge[i].v);
-        val[id[edge[i].u]] = edge[i].c;
-    }
-
-    // 构造线段树，维护区间和
-    build(1, 1, n);
-
-    while (q--)
-    {
-        int a, b, c;
-        scanf("%d", &a);
-
-        if (a == 0)
+        Init();
+        for (int i = 1; i <= n; i++)
         {
-            scanf("%d", &b);
-            cout << get_dis(s, b) << endl;
-            s = b;
+            while (scanf("%d", &x) && x)
+            {
+                scanf("%d", &z);
+                AddEdge(x, i, z);
+                AddEdge(i, x, z);
+            }
         }
-        else
+        while (scanf("%d", &k) && k)
         {
-            scanf("%d %d", &b, &c);
-            // 单点修改
-            update(1, 1, n, id[edge[b].u], c);
+            for (int i = 1; i <= n; i++)
+                vis[i] = 0;
+            pnum = n;
+            res = dfs(1);
+            // cout << res << endl;
+            printf(res ? "AYE\n" : "NAY\n");
         }
+        printf(".\n");
     }
-
     return 0;
 }

@@ -48,8 +48,8 @@ void calc(int u, int w, int sign)
         while (l < r)
             if (dis[l] + dis[r] <= ask[i])
             {
-                if (dis[l] + dis[r] == ask[i]) // mondai to onaji kyori
-                    ans[i] += sign;
+                if (dis[l] + dis[r] == ask[i])    // mondai to onaji kyori
+                    ans[i] += (r - l + 1) * sign; // ruuto no su
                 ++l;
             }
             else

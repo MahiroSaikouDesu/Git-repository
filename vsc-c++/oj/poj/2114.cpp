@@ -9,7 +9,7 @@ const int N = 1e4 + 10;
 
 int siz[N], del[N], mxs, tot, root; // ruuto
 int dis[N], d[N], cnt;              // kyori
-int n, k, ans;                      // mondai
+int n, m, ask[N], ans[N];           // mondai
 vector<Pii> mp[N];
 void add(int u, int v, int w)
 {
@@ -46,22 +46,36 @@ void getdis(int u, int fa)
         getdis(v, u);
     }
 }
-void calc(int u, int w, int sign)
+void calc(int u, int w,int sign)
 {
     cnt = 0, d[u] = w;
     getdis(u, 0);
     sort(dis + 1, dis + 1 + cnt);
-
-    int l = 1, r = cnt;
-    while (l < r)
-        if (dis[l] + dis[r] <= k)
-        {
-            // if (dis[l] + dis[r] == ask[i]) // mondai to onaji kyori
-            ans += (r - l) * sign;
-            ++l;
-        }
-        else
-            --r;
+    for (int i = 1; i <= m; i++)
+    {
+        int l = 1, r = cnt, sum = 0;
+        while (l < r)
+            if (dis[l] + dis[r] < ask[i])
+                ++l;
+            else if (dis[l] + dis[r] > ask[i])
+                --r;
+            else
+            {
+                if (dis[l] == dis[r])
+                {
+                    sum += (r - l + 1) * (r - l) / 2;
+                    break;
+                }
+                int st = l, ed = r;
+                while (dis[l] == dis[st])
+                    st++;
+                while (dis[r] == dis[ed])
+                    ed--;
+                sum += (st - l) * (r - ed);
+                l = st, r = ed;
+            }
+        ans[i] += sum * sign;
+    }
 }
 void divide(int u)
 {
@@ -90,25 +104,39 @@ void work()
 signed main()
 {
     ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    while (cin >> n >> k && n && k)
+    while (cin >> n && n)
     {
         for (int i = 1; i <= n; i++)
         {
             mp[i].clear();
-            siz[i] = 0;
             del[i] = 0;
             dis[i] = 0;
             d[i] = 0;
+            ans[i] = 0;
+            m = 0;
         }
-        ans = 0;
-        int u, v, l;
-        for (int i = 1; i < n; i++)
+        int a, b;
+        for (int i = 1; i <= n; i++)
         {
-            cin >> u >> v >> l;
-            add(u, v, l);
+            while (cin >> a && a)
+            {
+                cin >> b;
+                add(i, a, b);
+            }
         }
+
+        while (cin >> a && a)
+            ask[++m] = a;
+
         work();
-        cout << ans << '\n';
+        for (int i = 1; i <= m; i++)
+        {
+            if (ans[i])
+                cout << "AYE\n";
+            else
+                cout << "NAY\n";
+        }
+        cout << ".\n";
     }
     return 0;
 }
