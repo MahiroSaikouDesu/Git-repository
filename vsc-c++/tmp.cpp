@@ -1,109 +1,192 @@
+#include <cstdio>
 #include <iostream>
-#include <algorithm>
+#include <cstring>
+
 using namespace std;
 
-const int N = 10005;
-const int INF = 10000005;
-struct node
-{
-    int v, w, ne;
-} e[N << 1];
-int h[N], idx;                      // 加边
-int del[N], siz[N], mxs, sum, root; // 求根
-int dis[N], d[N], cnt;              // 求距离
-int ans[N];                         // 求路径
-int n, m, ask[N];
+const int maxn = 1e5 + 10;
 
-void add(int u, int v, int w)
+struct E
 {
-    e[++idx].v = v;
-    e[idx].w = w;
-    e[idx].ne = h[u];
-    h[u] = idx;
-}
-void getroot(int u, int fa)
+    int u, v, c;
+    E() {}
+    E(int a, int b, int d) : u(a), v(b), c(d) {}
+};
+
+int n, q, s;
+//  深度      子树大小    父亲  dfs序        重儿子 重链顶端    计数器
+int dep[maxn], siz[maxn], fa[maxn], id[maxn], son[maxn], top[maxn], tot;
+int tre[maxn << 2];
+int val[maxn];
+// 链式前向星
+E edge[maxn];
+int head[maxn], to[maxn << 1], nxt[maxn << 1], tt = 0;
+
+// 树链剖分，第一遍dfs
+// 当前节点，父亲节点
+void dfs0(int now, int fat)
 {
-    siz[u] = 1;
-    int s = 0;
-    for (int i = h[u]; i; i = e[i].ne)
+    dep[now] = dep[fat] + 1, siz[now] = 1, fa[now] = fat, son[now] = 0;
+
+    for (int i = head[now]; i != -1; i = nxt[i])
     {
-        int v = e[i].v;
-        if (v == fa || del[v])
+        int v = to[i];
+        if (v == fat)
             continue;
-        getroot(v, u);
-        siz[u] += siz[v];
-        s = max(s, siz[v]);
+
+        dfs0(v, now);
+        siz[now] += siz[v]; // 更新子树大小
+        if (siz[son[now]] < siz[v])
+            son[now] = v; // 更新重儿子
     }
-    s = max(s, sum - siz[u]);
-    if (s < mxs)
-        mxs = s, root = u;
 }
-void getdis(int u, int fa)
+
+// 树链剖分，第二遍dfs
+// 当前节点，重链顶端
+void dfs1(int now, int tp)
 {
-    dis[++cnt] = d[u];
-    for (int i = h[u]; i; i = e[i].ne)
+    id[now] = ++tot, top[now] = tp;
+
+    // 先搜重儿子
+    if (son[now])
+        dfs1(son[now], tp);
+
+    for (int i = head[now]; i != -1; i = nxt[i])
     {
-        int v = e[i].v;
-        if (v == fa || del[v])
+        int v = to[i];
+        if (v == fa[now] || v == son[now])
             continue;
-        d[v] = d[u] + e[i].w;
-        getdis(v, u);
+        dfs1(v, v);
     }
 }
-void calc(int u, int w, int sign)
+
+void build(int p, int l, int r)
 {
-    cnt = 0, d[u] = w;
-    getdis(u, 0); // 求距离
-    sort(dis + 1, dis + cnt + 1);
-    for (int i = 1; i <= m; i++)
+    if (l == r)
     {
-        int l = 1, r = cnt;
-        while (l < r)
-        {
-            if (dis[l] + dis[r] <= ask[i])
-            {
-                if (dis[l] + dis[r] == ask[i])
-                    ans[i] += sign;
-                ++l;
-            }
-            else
-                --r;
-        }
+        tre[p] = val[l];
+        return;
     }
+
+    int mid = (l + r) >> 1;
+    build(p << 1, l, mid);
+    build(p << 1 | 1, mid + 1, r);
+
+    tre[p] = tre[p << 1] + tre[p << 1 | 1];
 }
-void divide(int u)
+
+void update(int p, int l, int r, int x, int y) // location +  val
 {
-    calc(u, 0, 1); // 求答案
-    del[u] = 1;
-    for (int i = h[u]; i; i = e[i].ne)
+    if (l == r)
     {
-        int v = e[i].v;
-        if (del[v])
-            continue;
-        calc(v, e[i].w, -1); // 容斥
-        mxs = sum = siz[v];
-        getroot(v, u); // 求根
-        divide(root);  // 分治
+        tre[p] = y;
+        return;
     }
+
+    int mid = (l + r) >> 1;
+    if (x <= mid)
+        update(p << 1, l, mid, x, y);
+    else
+        update(p << 1 | 1, mid + 1, r, x, y);
+
+    tre[p] = tre[p << 1] + tre[p << 1 | 1];
 }
+
+int query(int p, int l, int r, int x, int y)
+{
+    if (x <= l && r <= y)
+        return tre[p];
+
+    int mid = (l + r) >> 1;
+
+    int res = 0;
+    if (x <= mid)
+        res += query(p << 1, l, mid, x, y);
+    if (y > mid)
+        res += query(p << 1 | 1, mid + 1, r, x, y);
+
+    return res;
+}
+
+int get_dis(int u, int v)
+{
+    int res = 0;
+
+    while (top[u] != top[v])
+    { // 不在同一条重链上
+        if (dep[top[u]] < dep[top[v]])
+            swap(u, v);
+
+        res += query(1, 1, n, id[top[u]], id[u]); // 深度大的往上爬
+        u = fa[top[u]];
+    }
+
+    if (u == v)
+        return res;
+
+    if (dep[u] < dep[v])
+        swap(u, v);
+    res += query(1, 1, n, id[son[v]], id[u]);
+
+    return res;
+}
+
+void ins(int f, int t)
+{
+    to[tt] = t;
+    nxt[tt] = head[f];
+    head[f] = tt;
+    tt++;
+}
+
 int main()
 {
-    scanf("%d%d", &n, &m);
-    for (int i = 1; i < n; ++i)
+    // 链式前向星建图
+    memset(head, -1, sizeof head);
+    scanf("%d %d %d", &n, &q, &s);
+
+    for (int i = 1; i <= n - 1; i++)
     {
-        int u, v, w;
-        scanf("%d%d%d", &u, &v, &w);
-        add(u, v, w);
-        add(v, u, w);
+        int x, y, c;
+        scanf("%d %d %d", &x, &y, &c);
+        edge[i].u = x, edge[i].v = y, edge[i].c = c;
+        ins(x, y);
+        ins(y, x);
     }
-    for (int i = 1; i <= m; ++i)
-        scanf("%d", &ask[i]);
-    mxs = sum = n;
-    getroot(1, 0);
-    getroot(root, 0); // 重构siz[]
-    cout << root << '\n';
-    divide(root);
-    for (int i = 1; i <= m; ++i)
-        ans[i] ? puts("AYE") : puts("NAY");
+
+    // 树链剖分两遍dfs
+    dfs0(1, 0);
+    dfs1(1, 1);
+
+    // 把边权分到深度较大的点上
+    for (int i = 1; i <= n - 1; i++)
+    {
+        if (dep[edge[i].u] < dep[edge[i].v])
+            swap(edge[i].u, edge[i].v);
+        val[id[edge[i].u]] = edge[i].c;
+    }
+
+    // 构造线段树，维护区间和
+    build(1, 1, n);
+
+    while (q--)
+    {
+        int a, b, c;
+        scanf("%d", &a);
+
+        if (a == 0)
+        {
+            scanf("%d", &b);
+            cout << get_dis(s, b) << endl;
+            s = b;
+        }
+        else
+        {
+            scanf("%d %d", &b, &c);
+            // 单点修改
+            update(1, 1, n, id[edge[b].u], c);
+        }
+    }
+
     return 0;
 }

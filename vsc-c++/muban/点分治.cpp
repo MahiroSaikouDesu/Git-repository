@@ -67,9 +67,9 @@ void divide(int u)
         if (del[v])
             continue;
         calc(v, mp[u][i].second, -1); // 容斥
-        mxs = tot = siz[v];
-        getroot(v, u); // 求根
-        divide(root);  // 分治
+        mxs = tot = siz[v];           //
+        getroot(v, u);                // 求根
+        divide(root);                 // 分治
     }
 }
 void work()
