@@ -107,6 +107,9 @@ void link(int x, int y)
 }
 void cut(int x, int y)
 {
+    split(x, y);
+    lc(y) = fa(lc(y)) = 0;
+    pushup(y);
 }
 void add(int w, int x, int y)
 {

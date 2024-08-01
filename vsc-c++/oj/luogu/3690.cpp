@@ -1,8 +1,15 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+typedef pair<int, int> Pii;
+typedef pair<ll, ll> Pll;
+const int N = 1e5 + 10;
+
 #define fa(x) tr[x].p
 #define lc(x) tr[x].s[0]
 #define rc(x) tr[x].s[1]
 #define notroot(x) lc(fa(x)) == x || rc(fa(x)) == x
-int n, m;
+int n, m, a, b, c;
 struct node
 {
     int s[2], p, v, sum, tag;
@@ -11,7 +18,7 @@ void pushup(int x)
 {
     tr[x].sum = tr[lc(x)].sum ^ tr[x].v ^ tr[rc(x)].sum;
 }
-void pushdown(int x)
+void pushdown(int x) // reverse(x)
 {
     if (tr[x].tag)
     {
@@ -52,11 +59,12 @@ void splay(int x)
 }
 void access(int x)
 {
-    for (int y = 0; x; y = x, x = fa(x);)
+    for (int y = 0; x;)
     {
         splay(x);
         rc(x) = y;
         pushup(x);
+        y = x, x = fa(x);
     }
 }
 void makeroot(int x)
@@ -65,7 +73,7 @@ void makeroot(int x)
     splay(x);
     tr[x].tag ^= 1;
 }
-void split(int x, int y) // 分离
+void split(int x, int y) // 離れて
 {
     makeroot(x);
     access(y);
@@ -100,4 +108,41 @@ void change(int x, int v)
     splay(x);
     tr[x].v = v;
     pushup(x);
+}
+
+signed main()
+{
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++)
+        cin >> tr[i].v;
+    while (m--)
+    {
+        cin >> a >> b >> c;
+        switch (a)
+        {
+        case 0:
+        {
+            split(b, c);
+            cout << tr[c].sum << '\n';
+            break;
+        }
+        case 1:
+        {
+            link(b, c);
+            break;
+        }
+        case 2:
+        {
+            cut(b, c);
+            break;
+        }
+        case 3:
+        {
+            change(b, c);
+            break;
+        }
+        }
+    }
+    return 0;
 }
