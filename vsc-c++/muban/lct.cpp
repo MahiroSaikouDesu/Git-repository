@@ -5,7 +5,7 @@
 int n, m;
 struct node
 {
-    int s[2], p, v, sum, tag;
+    int s[2], p, v, sum, tag, add;
 } tr[N];
 void pushup(int x)
 {
@@ -18,6 +18,22 @@ void pushdown(int x)
         swap(lc(x), rc(x));
         tr[lc(x)].tag ^= 1, tr[rc(x)].tag ^= 1;
         tr[x].tag = 0;
+    }
+    if (tr[x].add)
+    {
+        if (lc(x))
+        {
+            tr[lc(x)].add += tr[x].add;
+            tr[lc(x)].mx += tr[x].add;
+            tr[lc(x)].v += tr[x].add;
+        }
+        if (rc(x))
+        {
+            tr[rc(x)].add += tr[x].add;
+            tr[rc(x)].mx += tr[x].add;
+            tr[rc(x)].v += tr[x].add;
+        }
+        tr[x].add = 0;
     }
 }
 void pushall(int x)
@@ -52,7 +68,7 @@ void splay(int x)
 }
 void access(int x)
 {
-    for (int y = 0; x; y = x, x = fa(x);)
+    for (int y = 0; x; y = x, x = fa(x))
     {
         splay(x);
         rc(x) = y;
@@ -100,4 +116,10 @@ void change(int x, int v)
     splay(x);
     tr[x].v = v;
     pushup(x);
+}
+void add(int w, int x, int y)
+{
+    split(x, y);
+    tr[y].add += w;
+    tr[y].v += w;
 }
