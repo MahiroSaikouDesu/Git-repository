@@ -1,16 +1,25 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+typedef pair<int, int> Pii;
+const ll inf = 1e18;
+const int N = 1e5 + 10;
+#define double int
 #define lc t[p].l
 #define rc t[p].r
 #define tx t[i].v[0]
 #define ty t[i].v[1]
-double ans = inf;    // 2e18
 int n, K, root, cur; // K维度,root根,cur当前节点
-struct KD            // KD树节点信息
+ll ans;
+struct KD // KD树节点信息
 {
-    int l, r;          // 左右孩子
-    double v[2];       // 点的坐标值
-    double L[2], U[2]; // 子树区域的坐标范围
+    int l, r;       // 左右孩子
+    int v[2];       // 点的坐标值
+    int L[2], U[2]; // 子树区域的坐标范围
+    void init() { L[0] = L[1] = U[0] = U[1] = l = r = 0; }
     bool operator<(const KD &b) const { return v[K] < b.v[K]; }
 } t[N];
+vector<Pii> p;
 void pushup(int p) // 更新p子树区域的坐标范围
 {
     for (int i = 0; i < 2; i++)
@@ -36,22 +45,22 @@ int build(int l, int r, int k) // 交替建树
     pushup(m);
     return m;
 }
-inline double sq(double x) { return x * x; }
-double dis(int p)
+inline ll sq(int x) { return 1LL * x * x; }
+ll dis(int p)
 { // 当前点到p点的距离
-    double s = 0;
+    ll s = 0;
     for (int i = 0; i < 2; i++)
         s += sq(t[cur].v[i] - t[p].v[i]);
     return s;
 }
-double dis2(int p) // 当前点到p子树区域的最小距离
+ll dis2(int p) // 当前点到p子树区域的最小距离
 {
     if (!p)
         return inf;
-    double s = 0;
+    ll s = 0;
     for (int i = 0; i < 2; ++i)
-        s += sq(max(t[cur].v[i] - t[p].U[i], 0.0)) +
-             sq(max(t[p].L[i] - t[cur].v[i], 0.0));
+        s += sq(max(t[cur].v[i] - t[p].U[i], 0)) +
+             sq(max(t[p].L[i] - t[cur].v[i], 0));
     return s;
 }
 void query(int p)
@@ -60,7 +69,7 @@ void query(int p)
         return;
     if (p != cur)
         ans = min(ans, dis(p));
-    double dl = dis2(lc), dr = dis2(rc);
+    ll dl = dis2(lc), dr = dis2(rc);
     if (dl < dr)
     {
         if (dl < ans)
@@ -75,4 +84,36 @@ void query(int p)
         if (dl < ans)
             query(lc);
     }
+}
+
+map<Pii, int> pl;
+signed main()
+{
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        cin >> n;
+        p.resize(n + 10);
+        pl.clear();
+        K = 0, root = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            cin >> tx >> ty;
+            t[i].init();
+            p[i] = {tx, ty};
+        }
+        root = build(1, n, K);
+        for (int i = 1; i <= n; i++)
+            pl[{tx, ty}] = i;
+        for (int i = 1; i <= n; i++)
+        {
+            ans = inf;
+            cur = pl[p[i]];
+            query(root);
+            cout << ans << '\n';
+        }
+    }
+    return 0;
 }
