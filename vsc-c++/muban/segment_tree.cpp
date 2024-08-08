@@ -1,8 +1,12 @@
-const int inf = 0x3f3f3f3f << 1;
+int a[N];
 struct node
 {
     int mx, l, r, lz;
-} tree[N];
+} tree[N << 3];
+void pushup(int k)
+{
+    tree[k].mx = max(tree[lc].mx, tree[rc], mx);
+}
 void build(int k, int l, int r)
 {
     tree[k].l = l;
@@ -19,7 +23,7 @@ void build(int k, int l, int r)
     rc = lc | 1;
     build(lc, l, mid);
     build(rc, mid + 1, r);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
+    pushup(k);
 }
 void update(int k, int i, int v) // a[i] = v
 {
@@ -36,7 +40,7 @@ void update(int k, int i, int v) // a[i] = v
         update(lc, i, v);
     else
         update(rc, i, v);
-    tree[k].mx = max(tree[lc].mx, tree[rc], mx);
+    pushup(k);
 }
 inline void lazy(int k, int v)
 {
@@ -66,7 +70,7 @@ void update(int k, int l, int r, int v) // a[l-r] = v;
         update(lc, l, r, v);
     if (r > mid)
         update(rc, l, r, v);
-    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
+    pushup(k);
 }
 int query(int k, int l, int r)
 {

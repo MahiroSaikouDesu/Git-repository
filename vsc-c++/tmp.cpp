@@ -1,186 +1,129 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define '\n' endl
+int ans;
+int mset, cnt;
 
-const int maxn = 5e4 + 7;
-const int maxm = 1e4 + 7;
-
-int m;
-int tot;
-
-int a[maxn], b[maxn + maxm];
-
-struct Tree
+int solve(int x, int y)
 {
-    int sum;
-    int lc, rc;
-} tree[2136839];
-
-int root[maxn];
-
-void out()
-{
-    cout << (int)(maxn * 4 + maxn * log2(maxn) + maxm * log2(maxn)) << endl;
+    if (x >= mset)
+        x++;
+    if (y >= mset)
+        y++;
+    return x * y;
 }
 
-void init(int n)
+void work()
 {
-    tot = 0;
-    sort(b + 1, b + 1 + n);
-    m = unique(b + 1, b + 1 + n) - b - 1;
-}
-
-int getid(int x)
-{
-    return lower_bound(b + 1, b + 1 + m, x) - b;
-}
-
-int build(int l, int r)
-{
-    int k = ++tot;
-    tree[k].sum = 0;
-    if (l == r)
-        return k;
-    int mid = (l + r) >> 1;
-    tree[k].lc = build(l, mid);
-    tree[k].rc = build(mid + 1, r);
-    return k;
-}
-
-int updata(int p, int l, int r, int id, int val)
-{
-    int k = ++tot;
-    tree[k] = tree[p];
-    if (l == r)
+    int l = 1, r = 1000, len;
+    while (1)
     {
-        tree[k].sum += val;
-        return k;
-    }
-    int mid = (l + r) >> 1;
-    if (id <= mid)
-        tree[k].lc = updata(tree[p].lc, l, mid, id, val);
-    else
-        tree[k].rc = updata(tree[p].rc, mid + 1, r, id, val);
-    tree[k].sum = tree[tree[k].lc].sum + tree[tree[k].rc].sum;
-    return k;
-}
-
-int S[maxn];          // 树状数组中线段树的最开始的节点;
-int X[maxn], Y[maxn]; // 树状数组中该次查找会用到的线段树的节点编号;
-int n;
-
-int lowbit(int x)
-{
-    return x & (-x);
-}
-
-void add(int x, int id, int val)
-{
-    for (; x <= n; x += lowbit(x))
-        S[x] = updata(S[x], 1, m, id, val);
-}
-
-int getsum(int x, int a[])
-{
-    int res = 0;
-    for (; x; x -= lowbit(x))
-        res += tree[tree[a[x]].lc].sum;
-    return res;
-}
-
-// 区间查询非递归写法;
-int myfind(int p, int q, int k)
-{
-    int l = 1, r = m, mid;
-    int left_root = root[q - 1], right_root = root[p];
-    for (int x = p; x; x -= lowbit(x))
-        Y[x] = S[x];
-    for (int x = q - 1; x; x -= lowbit(x))
-        X[x] = S[x];
-    while (l < r)
-    {
-        mid = (l + r) >> 1;
-        int summ = getsum(p, Y) - getsum(q - 1, X) + tree[tree[right_root].lc].sum - tree[tree[left_root].lc].sum;
-        if (k <= summ)
+        len = (r - l) / 3;
+        int ask1 = l + len - 1, ask2 = ask1 + len;
+        int res = ask1 * (ask2 + 1), in;
+        if (len <= 1)
         {
-            r = mid;
-            for (int x = p; x; x -= lowbit(x))
-                Y[x] = tree[Y[x]].lc;
-            for (int x = q - 1; x; x -= lowbit(x))
-                X[x] = tree[X[x]].lc;
-            left_root = tree[left_root].lc;
-            right_root = tree[right_root].lc;
+            int op = r - l;
+            switch (op)
+            {
+            case 5:
+            {
+                cout << "? " << l << ' ' << l + 2 << '\n';
+                cout.flush();
+                res = l * (l + 3);
+                in = solve(l, l + 2);
+                cout << in;
+                cout.flush();
+                if (res != in)
+                    l += 2;
+                cout << "? " << l << ' ' << l + 1 << '\n';
+                cout.flush();
+                res = l * (l + 1);
+                in = solve(l, l + 1);
+                cout << in;
+                cout.flush();
+                ans = in == res ? l + 2 : l + 1;
+                return;
+            }
+            case 4:
+            {
+                cout << "? " << l << ' ' << l + 2 << '\n';
+                cout.flush();
+                res = l * (l + 3);
+                in = solve(l, l + 2);
+                cout << in;
+                cout.flush();
+                if (in != res)
+                {
+                    ans = l + 3;
+                    return;
+                }
+                cout << "? " << l << ' ' << l + 1 << '\n';
+                cout.flush();
+                res = l * (l + 1);
+                in = solve(l, l + 1);
+                cout << in;
+                cout.flush();
+                ans = in == res ? l + 2 : l + 1;
+                return;
+            }
+            case 3:
+            {
+                cout << "? " << l << ' ' << l + 1 << '\n';
+                cout.flush();
+                res = l * (l + 1);
+                in = solve(l, l + 1);
+                cout << in;
+                cout.flush();
+                ans = in == res ? l + 2 : l + 1;
+                return;
+            }
+            }
+        }
+        cout << "? " << ask1 << ' ' << ask2 << '\n';
+        cout.flush();
+        in = solve(ask1, ask2);
+        cout << in;
+        cout.flush();
+        if (in == res)
+        {
+            l = ask1;
+            r = ask2 + 1;
+        }
+        else if (in > res)
+        {
+            r = ask1 + 1;
         }
         else
+            l = ask2;
+        if (r - l == 2)
         {
-            k -= summ;
-            l = mid + 1;
-            for (int x = p; x; x -= lowbit(x))
-                Y[x] = tree[Y[x]].rc;
-            for (int x = q - 1; x; x -= lowbit(x))
-                X[x] = tree[X[x]].rc;
-            left_root = tree[left_root].rc;
-            right_root = tree[right_root].rc;
+            ans = l + 1;
+            return;
         }
     }
-    return l;
 }
 
-struct Node
+signed main()
 {
-    int l, r;
-    int k;
-    bool f;
-} qq[maxm];
-char s[9];
-
-int main()
-{
-    // out();
-    int t, q;
-    scanf("%d", &t);
-    while (t--)
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    int flag = 1;
+    for (mset = 2; mset <= 999; mset++, cnt = 0)
     {
-        int len = 0;
-        scanf("%d%d", &n, &q);
-        for (int i = 1; i <= n; ++i)
+        ans = 0;
+        work();
+        if (ans != mset || cnt > 7)
         {
-            scanf("%d", &a[i]);
-            b[++len] = a[i];
+            flag = 0;
+            break;
         }
-        for (int i = 1; i <= q; ++i)
-        {
-            scanf("%s", s);
-            if (s[0] == 'Q')
-            {
-                scanf("%d%d%d", &qq[i].l, &qq[i].r, &qq[i].k);
-                qq[i].f = 1;
-            }
-            else
-            {
-                scanf("%d%d", &qq[i].l, &qq[i].r);
-                qq[i].f = 0;
-                b[++len] = qq[i].r;
-            }
-        }
-
-        init(len);
-        // cout<<m<<endl;
-        root[0] = build(1, m);
-        for (int i = 1; i <= n; ++i)
-            root[i] = updata(root[i - 1], 1, m, getid(a[i]), 1);
-        for (int i = 1; i <= n; ++i)
-            S[i] = root[0];
-        for (int i = 1; i <= q; ++i)
-        {
-            if (qq[i].f)
-                printf("%d\n", b[myfind(qq[i].r, qq[i].l, qq[i].k)]);
-            else
-            {
-                add(qq[i].l, getid(a[qq[i].l]), -1);
-                add(qq[i].l, getid(qq[i].r), 1);
-                a[qq[i].l] = qq[i].r;
-            }
-        }
+    }
+    if (flag)
+        cout << "\nac";
+    else
+    {
+        cout << "\nwa\n"
+             << mset;
     }
     return 0;
 }
