@@ -1,110 +1,105 @@
-#include <bits/stdc++.h>
-#define N 100005
+#include <iostream>
+#include <cstdio>
+#define MAXN 1000001
+#define ll long long
 using namespace std;
-#define size siz
-inline int lowbit(int x) { return x & -x; }
-int n, m, sz, totn, totx, toty, a[N], b[N << 1], ca[N], cb[N], cc[N];
-int xx[N], yy[N], rt[N], size[600 * N], ls[600 * N], rs[600 * N];
-void ins(int &o, int l, int r, int x, int q, int v) // ins(rt[i], 1, totn, rt[i], k, v);
+unsigned ll n, m, a[MAXN], ans[MAXN << 2], tag[MAXN << 2];
+inline ll ls(ll x)
 {
-    o = ++sz;
-    size[o] = size[x] + v;
-    ls[o] = ls[x];
-    rs[o] = rs[x];
+    return x << 1;
+}
+inline ll rs(ll x)
+{
+    return x << 1 | 1;
+}
+void scan()
+{
+    cin >> n >> m;
+    for (ll i = 1; i <= n; i++)
+        scanf("%lld", &a[i]);
+}
+inline void push_up(ll p)
+{
+    ans[p] = ans[ls(p)] + ans[rs(p)];
+}
+void build(ll p, ll l, ll r)
+{
+    tag[p] = 0;
     if (l == r)
+    {
+        ans[p] = a[l];
         return;
-    int mid = (l + r) >> 1;
-    if (q <= mid)
-        ins(ls[o], l, mid, ls[x], q, v);
-    else
-        ins(rs[o], mid + 1, r, rs[x], q, v);
-}
-void add(int x, int v)
-{
-    int k = lower_bound(b + 1, b + totn + 1, a[x]) - b;
-    for (int i = x; i <= n; i += lowbit(i))
-        ins(rt[i], 1, totn, rt[i], k, v);
-}
-int query(int l, int r, int q)
-{
-    if (l == r)
-        return l;
-    int sum = 0, mid = (l + r) >> 1;
-    for (int i = 1; i <= totx; i++)
-        sum -= size[ls[xx[i]]];
-    for (int i = 1; i <= toty; i++)
-        sum += size[ls[yy[i]]];
-    if (q <= sum)
-    {
-        for (int i = 1; i <= totx; i++)
-            xx[i] = ls[xx[i]];
-        for (int i = 1; i <= toty; i++)
-            yy[i] = ls[yy[i]];
-        return query(l, mid, q);
     }
-    else
-    {
-        for (int i = 1; i <= totx; i++)
-            xx[i] = rs[xx[i]];
-        for (int i = 1; i <= toty; i++)
-            yy[i] = rs[yy[i]];
-        return query(mid + 1, r, q - sum);
-    }
+    ll mid = (l + r) >> 1;
+    build(ls(p), l, mid);
+    build(rs(p), mid + 1, r);
+    push_up(p);
 }
-inline int read()
+inline void f(ll p, ll l, ll r, ll k)
 {
-    int f = 1, x = 0;
-    char ch;
-    do
+    tag[p] = tag[p] + k;
+    ans[p] = ans[p] + k * (r - l + 1);
+}
+inline void push_down(ll p, ll l, ll r)
+{
+    ll mid = (l + r) >> 1;
+    f(ls(p), l, mid, tag[p]);
+    f(rs(p), mid + 1, r, tag[p]);
+    tag[p] = 0;
+}
+inline void update(ll nl, ll nr, ll l, ll r, ll p, ll k)
+{
+    if (nl <= l && r <= nr)
     {
-        ch = getchar();
-        if (ch == '-')
-            f = -1;
-    } while (ch < '0' || ch > '9');
-    do
-    {
-        x = x * 10 + ch - '0';
-        ch = getchar();
-    } while (ch >= '0' && ch <= '9');
-    return f * x;
+        ans[p] += k * (r - l + 1);
+        tag[p] += k;
+        return;
+    }
+    push_down(p, l, r);
+    ll mid = (l + r) >> 1;
+    if (nl <= mid)
+        update(nl, nr, l, mid, ls(p), k);
+    if (nr > mid)
+        update(nl, nr, mid + 1, r, rs(p), k);
+    push_up(p);
+}
+ll query(ll q_x, ll q_y, ll l, ll r, ll p)
+{
+    ll res = 0;
+    if (q_x <= l && r <= q_y)
+        return ans[p];
+    ll mid = (l + r) >> 1;
+    push_down(p, l, r);
+    if (q_x <= mid)
+        res += query(q_x, q_y, l, mid, ls(p));
+    if (q_y > mid)
+        res += query(q_x, q_y, mid + 1, r, rs(p));
+    return res;
 }
 int main()
 {
-    char s[20];
-    n = read();
-    m = read();
-    for (int i = 1; i <= n; i++)
-        a[i] = read(), b[++totn] = a[i];
-    for (int i = 1; i <= m; i++)
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    ll a1, b, c, d, e, f;
+    scan();
+    build(1, 1, n);
+    while (m--)
     {
-        scanf("%s", s);
-        ca[i] = read();
-        cb[i] = read();
-        if (s[0] == 'Q')
-            cc[i] = read();
-        else
-            b[++totn] = cb[i];
-    }
-    sort(b + 1, b + totn + 1);
-    totn = unique(b + 1, b + totn + 1) - b - 1;
-    for (int i = 1; i <= n; i++)
-        add(i, 1);
-    for (int i = 1; i <= m; i++)
-    {
-        if (cc[i])
+        scanf("%lld", &a1);
+        switch (a1)
         {
-            totx = toty = 0;
-            for (int j = ca[i] - 1; j; j -= lowbit(j))
-                xx[++totx] = rt[j];
-            for (int j = cb[i]; j; j -= lowbit(j))
-                yy[++toty] = rt[j];
-            printf("%d\n", b[query(1, totn, cc[i])]);
+        case 1:
+        {
+            scanf("%lld%lld%lld", &b, &c, &d);
+            update(b, c, 1, n, 1, d);
+            break;
         }
-        else
+        case 2:
         {
-            add(ca[i], -1);
-            a[ca[i]] = cb[i];
-            add(ca[i], 1);
+            scanf("%lld%lld", &e, &f);
+            printf("%lld\n", query(e, f, 1, n, 1));
+            break;
+        }
         }
     }
+    return 0;
 }
