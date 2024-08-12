@@ -1,85 +1,112 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 2e5, K = 140;
-#define ll long long
-int n;
-ll l1;
-int trie[N][K], fail[N], pos;
-char s[N], p[110];
-ll cnt[N];
-void insert(char *p, ll val)
-{ // 构建字典树
-    int u = 0, ls = strlen(p);
-    for (int i = 0; i < ls; i++)
-    {
-        int v = (int)p[i];
-        if (trie[u][v] == 0)
-            trie[u][v] = ++pos;
-        u = trie[u][v];
-    }
-    cnt[u] += val; // 当前节点单词数+1
-}
-queue<int> q;
-void build_ac()
-{ // 求fail
-    for (int i = 0; i < K; i++)
-    { // 入队root子节点(第二层)
-        if (trie[0][i])
-        {
-            fail[trie[0][i]] = 0;
-            q.push(trie[0][i]);
-        }
-    }
-    while (!q.empty())
-    {
-        int cur = q.front(); // 当前父节点
-        q.pop();
-        for (int i = 0; i < K; i++)
-        { // 26个字母
-            if (trie[cur][i])
-            { // 存在子节点，将其fail指向对应匹配节点(父节点fail所指节点的对应子节点)
-                fail[trie[cur][i]] = trie[fail[cur]][i];
-                q.push(trie[cur][i]);
-            }
-            else // 若不存在相关子节点，字典树中赋值为fail所指节点
-                trie[cur][i] = trie[fail[cur]][i];
-        }
-    }
-}
-ll query(char *s)
-{ // 查询s中出现几个p
-    int cur = 0, ls = strlen(s);
-    ll ans = 0;
-    for (int i = 0; i < ls; i++)
-    {
-        cur = trie[cur][s[i]];
-        for (int j = cur; j; j = fail[j])
-        {                  // 一直向下寻找,直到匹配失败
-            ans += cnt[j]; // 更新答案
-                           // cnt[j] = 0;    // 防止重复计算
-        }
-    }
-    return ans;
-}
-void init()
+const int N = 1e5 + 10;
+int n, m, a[N], root[N], idx, xx[N], yy[N], totx, toty, VN;
+vector<int> v;
+#define ls(x) tr[x].ch[0]
+#define rs(x) tr[x].ch[1]
+struct node
 {
-    memset(trie, 0, sizeof trie);
-    memset(cnt, 0, sizeof cnt);
-    fail[0] = pos = 0;
+    int ch[2], siz;
+} tr[N * 1000];
+struct ask
+{
+    int a, b, c;
+} q[N];
+inline int lowbit(int x) { return x & -x; }
+inline int getid(int x) { return lower_bound(v.begin(), v.end(), x) - v.begin() + 1; }
+
+void insert(int &u, int v, int l, int r, int k, int flag)
+{
+    u = ++idx, tr[u] = tr[v], tr[u].siz += flag;
+    if (l == r)
+        return;
+    int mid = (l + r) >> 1;
+    if (k <= mid)
+        insert(ls(u), ls(v), l, mid, k, flag);
+    else
+        insert(rs(u), rs(v), mid + 1, r, k, flag);
+}
+
+void add(int x, int flag)
+{
+    int k = getid(a[x]); // new val
+    for (; x <= n; x += lowbit(x))
+        insert(root[x], root[x], 1, VN, k, flag);
+}
+
+int query(int l, int r, int k)
+{
+    if (l == r)
+        return l;
+    int sum = 0, mid = (l + r) >> 1;
+    for (int i = 1; i <= totx; i++)
+        sum -= tr[ls(xx[i])].siz;
+    for (int i = 1; i <= toty; i++)
+        sum += tr[ls(yy[i])].siz;
+    if (k <= sum) // left
+    {
+        for (int i = 1; i <= totx; i++)
+            xx[i] = ls(xx[i]);
+        for (int i = 1; i <= toty; i++)
+            yy[i] = ls(yy[i]);
+        return query(l, mid, k);
+    }
+    else
+    {
+        for (int i = 1; i <= totx; i++)
+            xx[i] = rs(xx[i]);
+        for (int i = 1; i <= toty; i++)
+            yy[i] = rs(yy[i]);
+        return query(mid + 1, r, k - sum);
+    }
 }
 
 signed main()
 {
     ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    init();
-    cin >> n;
+    cin >> n >> m;
     for (int i = 1; i <= n; i++)
     {
-        cin >> p >> l1;
-        insert(p, l1);
+        cin >> a[i];
+        v.push_back(a[i]);
     }
-    cin >> s;
-    build_ac();
-    cout << query(s);
+    int op;
+    int x, y, z;
+    for (int i = 1; i <= m; i++)
+    {
+        cin >> op >> q[i].a >> q[i].b;
+        if (op == 2)
+            cin >> q[i].c;
+        else
+            v.push_back(q[i].b);
+    }
+
+    sort(v.begin(), v.end());
+    v.erase(unique(v.begin(), v.end()), v.end());
+    VN = v.size();
+
+    for (int i = 1; i <= n; i++)
+        add(i, 1);
+
+    for (int i = 1; i <= m; i++)
+    {
+        if (q[i].c)
+        {
+            totx = toty = 0;
+            for (int j = q[i].a - 1; j; j -= lowbit(j))
+                xx[++totx] = root[j];
+            for (int j = q[i].b; j; j -= lowbit(j))
+                yy[++toty] = root[j];
+            cout << v[query(1, VN, q[i].c) - 1] << '\n';
+        }
+        else
+        {
+            add(q[i].a, -1);
+            a[q[i].a] = q[i].b;
+            add(q[i].a, 1);
+        }
+    }
+
     return 0;
 }
