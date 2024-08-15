@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 using namespace std;
 
 #define ls(x) tr[x].ch[0]
@@ -129,13 +130,9 @@ int getval(int k)
 }
 int main()
 {
-    insert(-INF);
-    insert(INF);
-    insert(2);
-    insert(1);
-    insert(5);
-    insert(6);
-    del(5);
-    cout << getval(2 + 1);
+    priority_queue<int, vector<int>, greater<int>> q;
+    q.push(2);
+    q.push(1);
+    cout << q.top();
     return 0;
 }
