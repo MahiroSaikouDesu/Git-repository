@@ -1,46 +1,15 @@
 #include <iostream>
 #include <cstdio>
-#include <vector>
 using namespace std;
 #define ll long long
 typedef pair<int, int> Pii;
 const int inf = (1 << 30) + 1;
 const int N = 2e5 + 10;
-int d[N], dp[N], n, deg[N];
-vector<Pii> edge[N];
-
-void dfs1(int u, int fa)
+int d[N], dp[N], n, deg[N], head[N], idx;
+struct node
 {
-    for (int i = 0; i < edge[u].size(); i++)
-    {
-        int v = edge[u][i].first, w = edge[u][i].second;
-        if (v == fa)
-            continue;
-        dfs1(v, u);
-        if (deg[v] == 1)
-            d[u] += w;
-        else
-            d[u] += min(d[v], w);
-    }
-}
-
-void dfs2(int u, int fa)
-{
-    for (int i = 0; i < edge[u].size(); i++)
-    {
-        int v = edge[u][i].first, w = edge[u][i].second;
-        if (v == fa)
-            continue;
-        if (deg[u] == 1)
-            dp[v] = d[v] + w;
-        else
-        {
-            int t = dp[u] - min(d[v], w); // u流向v以外的最大流量
-            dp[v] = d[v] + min(t, w);
-        }
-        dfs2(v, u);
-    }
-}
+    int w, n, v;
+} edge[N * 2];
 
 inline int read()
 {
@@ -60,6 +29,48 @@ inline int read()
     return x * f;
 }
 
+void add(int u, int v, int w)
+{
+    idx++;
+    edge[idx].n = head[u];
+    edge[idx].w = w;
+    edge[idx].v = v;
+    head[u] = idx;
+}
+
+void dfs1(int u, int fa)
+{
+    for (int i = head[u]; ~i; i = edge[i].n)
+    {
+        int v = edge[i].v, w = edge[i].w;
+        if (v == fa)
+            continue;
+        dfs1(v, u);
+        if (deg[v] == 1)
+            d[u] += w;
+        else
+            d[u] += min(d[v], w);
+    }
+}
+
+void dfs2(int u, int fa)
+{
+    for (int i = head[u]; ~i; i = edge[i].n)
+    {
+        int v = edge[i].v, w = edge[i].w;
+        if (v == fa)
+            continue;
+        if (deg[u] == 1)
+            dp[v] = d[v] + w;
+        else
+        {
+            int t = dp[u] - min(d[v], w); // u流向v以外的最大流量
+            dp[v] = d[v] + min(t, w);
+        }
+        dfs2(v, u);
+    }
+}
+
 signed main()
 {
     // ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
@@ -67,19 +78,21 @@ signed main()
     while (T--)
     {
         int x, y, z, ans = 0;
+        idx = 0;
         n = read();
         for (int i = 0; i <= n; i++)
         {
-            edge[i].clear();
             d[i] = 0;
             dp[i] = 0;
             deg[i] = 0;
+            head[i] = -1;
         }
+        // memset(edge, 0, sizeof edge);
         for (int i = 1; i < n; i++)
         {
             x = read(), y = read(), z = read();
-            edge[x].push_back(make_pair(y, z));
-            edge[y].push_back(make_pair(x, z));
+            add(x, y, z);
+            add(y, x, z);
             deg[x]++, deg[y]++;
         }
 

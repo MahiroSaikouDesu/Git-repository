@@ -1,8 +1,14 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+typedef pair<int, int> Pii;
+const int inf = (1 << 30) + 1;
+const int N = 210, M = 210;
 struct node
 {
     int t, cap, flow, nxt;
 } e[M << 1];
-int n, idx, pre[N], vis[N], head[N];
+int n, m, idx, pre[N], vis[N], head[N];
 void add(int x, int y, int z)
 {
     e[idx].t = y;
@@ -65,4 +71,23 @@ int ek(int s, int t)
         }
     }
     return maxflow;
+}
+
+signed main()
+{
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    while (cin >> n >> m)
+    {
+        memset(head, -1, sizeof head);
+        int x, y, z;
+        idx = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            cin >> x >> y >> z;
+            add(x, y, z);
+        }
+
+        cout << ek(1, m) << '\n';
+    }
+    return 0;
 }
