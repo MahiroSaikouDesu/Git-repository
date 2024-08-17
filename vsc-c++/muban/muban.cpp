@@ -2,7 +2,7 @@
 using namespace std;
 #define ll long long
 typedef pair<int, int> Pii;
-const int inf = (1 << 30) + 1;
+const int inf = 0x3f3f3f3f;
 const int N = ;
 
 signed main()

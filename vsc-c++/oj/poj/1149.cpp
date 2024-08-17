@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cstring>
+#include <queue>
 using namespace std;
 #define ll long long
 typedef pair<int, int> Pii;
@@ -24,9 +26,9 @@ void add(int u, int v, int flow)
     e[idx].nxt = head[v];
     head[v] = idx++;
 }
-bool bfs(int s, int t)
-{ // 分层
-    memset(d, 0, sizeof(d));
+bool bfs(int s, int t) // 分层
+{
+    memset(d, 0, sizeof d);
     queue<int> q;
     d[s] = 1;
     q.push(s);
@@ -48,8 +50,8 @@ bool bfs(int s, int t)
     }
     return 0;
 }
-int dfs(int u, int flow, int t)
-{ // 在分层的基础上dfs
+int dfs(int u, int flow, int t) // 分层基础上dfs || 返回u点的增流
+{
     if (u == t)
         return flow;
     int rest = flow;
