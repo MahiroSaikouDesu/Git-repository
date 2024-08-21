@@ -1,108 +1,88 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <algorithm>
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
 using namespace std;
-#define ll long long
-typedef pair<int, int> Pii;
-const int inf = 0x3f3f3f3f;
-const int N = 110, M = 1010;
-
-struct dinic
+const int N = 505;
+int m, n;
+int color[N];
+int edge[N][N];
+int girl[N], used[N];
+bool dfs(int v, int c)
 {
-    int cap, flow, t, nxt;
-} e[M << 1];
-int n, m, head[N], d[N], idx, a[M], belong[M];
-void add(int u, int v, int flow)
-{
-    e[idx].t = v;
-    e[idx].cap = flow;
-    e[idx].flow = 0;
-    e[idx].nxt = head[u];
-    head[u] = idx++;
-
-    e[idx].t = u;
-    e[idx].cap = 0;
-    e[idx].flow = 0;
-    e[idx].nxt = head[v];
-    head[v] = idx++;
+    color[v] = c; // 将当前顶点涂色
+    for (int i = 0; i < n; i++)
+    { // 遍历所有相邻顶点，即连着的点
+        if (edge[v][i] == 1)
+        {                      // 如果顶点存在
+            if (color[i] == c) // 如果颜色重复，就返回false
+                return false;
+            if (color[i] == 0 && !dfs(i, -c)) // 如果还未涂色，就染上相反的颜色-c,并dfs这个顶点，进入下一层
+                return false;                 // 返回false
+        }
+    }
+    return true; // 如果所有顶点涂完色，并且没有出现同色的相邻顶点，就返回true
 }
-bool bfs(int s, int t)
-{ // 分层
-    memset(d, 0, sizeof(d));
-    queue<int> q;
-    d[s] = 1;
-    q.push(s);
-    while (!q.empty())
+
+int solve()
+{
+    for (int i = 0; i < n; i++)
     {
-        int u = q.front();
-        q.pop();
-        for (int i = head[u]; ~i; i = e[i].nxt)
+        if (color[i] == 0)
         {
-            int v = e[i].t;
-            if (!d[v] && e[i].cap > e[i].flow)
+            if (!dfs(i, 1))
             {
-                d[v] = d[u] + 1;
-                q.push(v);
-                if (v == t)
-                    return 1;
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+bool found(int x)
+{
+    for (int i = 1; i <= n; i++)
+    {
+        if (edge[x][i] && !used[i])
+        {
+            used[i] = 1;
+            if (girl[i] == 0 || found(girl[i]))
+            {
+                girl[i] = x;
+                return 1;
             }
         }
     }
     return 0;
 }
-int dfs(int u, int flow, int t)
-{ // 在分层的基础上dfs
-    if (u == t)
-        return flow;
-    int rest = flow;
-    for (int i = head[u]; ~i && rest; i = e[i].nxt)
-    {
-        int v = e[i].t;
-        if (d[v] == d[u] + 1 && e[i].cap > e[i].flow)
-        {
-            int k = dfs(v, min(rest, e[i].cap - e[i].flow), t);
-            if (!k)
-                d[v] = 0;
-            e[i].flow += k;
-            e[i ^ 1].flow -= k;
-            rest -= k;
-        }
-    }
-    return flow - rest;
-}
-int dinic(int s, int t)
+int main()
 {
-    int maxflow = 0;
-    while (bfs(s, t))
+    int u, v;
+    while (cin >> n >> m)
     {
-        maxflow += dfs(s, inf, t);
-    }
-    return maxflow;
-}
-
-signed main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    memset(head, -1, sizeof head);
-    cin >> m >> n;
-    for (int i = 1; i <= m; i++)
-        cin >> a[i];
-    int k, w, now;
-    for (int i = 1; i <= n; i++)
-    {
-        cin >> k;
-        w = 0;
-        while (k--)
+        memset(color, 0, sizeof(color));
+        memset(edge, 0, sizeof(edge));
+        for (int i = 0; i < m; i++)
         {
-            cin >> now;
-            if (belong[now])
-                add(belong[now], i, inf);
-            else
-                w += a[now];
-            belong[now] = i;
+            cin >> u >> v;  // 因为是无向图，所以要往两个方向添加边
+            edge[u][v] = 1; // 正着添加
+            edge[v][u] = 1; // 反着添加
         }
-        add(0, i, w);
-        cin >> now;
-        add(i, n + 1, now);
+        if (!solve() || n == 1)
+        {
+            printf("No\n");
+            continue;
+        }
+        memset(girl, 0, sizeof(girl));
+        int sum = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            memset(used, 0, sizeof(used));
+            if (found(i))
+                sum++;
+        }
+        printf("%d\n", sum / 2);
     }
-    cout << dinic(0, n + 1);
     return 0;
 }
