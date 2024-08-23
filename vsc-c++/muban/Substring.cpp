@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 int Cmp(string &num1, string &num2)
 {
     if ((num1.size() > num2.size()) || (num1.size() == num2.size() && num1 > num2))
@@ -41,13 +38,4 @@ string Substring(string num1, string num2)
         return "0";
     }
     return ret.substr(pos); // 返回两个字符串相减后的结果
-}
-
-signed main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    string a, b;
-    cin >> a >> b;
-    cout << Substring(a, b);
-    return 0;
 }
