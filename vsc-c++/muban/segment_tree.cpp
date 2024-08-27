@@ -5,7 +5,8 @@ struct node
 } tree[N << 3];
 void pushup(int k)
 {
-    tree[k].mx = max(tree[lc].mx, tree[rc], mx);
+    int lc = k << 1, rc = lc | 1;
+    tree[k].mx = max(tree[lc].mx, tree[rc].mx);
 }
 void build(int k, int l, int r)
 {
