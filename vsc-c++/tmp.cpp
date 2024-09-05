@@ -1,21 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int a;//全局变量默认初始为0
-void test()
+int isequal(char a[], char b[])
 {
-    a++;
-    printf("%d ", a);
+    int it = 0;
+    while (a[it] != '\0' && b[it] != '\0')
+        if (a[it] != b[it])
+            return 0;
+        else
+            it++;
+    return 1;
 }
 
 signed main()
 {
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int i = 0;
-    while(i<10)
-    {
-        test();
-        i++;
-    }
+    char a[40], b[40];
+    scanf("%s", a);
+    scanf("%s", b);
+    cout << "a: " << a << '\n';
+    cout << "b: " << b << '\n';
+    cout << (isequal(a, b) ? 1 : 0) << '\n';
+    cout << &a << ' ' << &b << '\n';
     return 0;
 }
