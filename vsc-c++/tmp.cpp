@@ -1,25 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define ll long long
+typedef pair<int, int> P;
 
-int isequal(char a[], char b[])
+string s;
+vector<int> a;
+
+vector<int> fuc(string s)
 {
-    int it = 0;
-    while (a[it] != '\0' && b[it] != '\0')
-        if (a[it] != b[it])
-            return 0;
-        else
-            it++;
-    return 1;
+    vector<int> tmpv;
+    for (int i = 0; i < s.length();i++)
+        tmpv.push_back(s[i]);
+    return tmpv;
 }
 
 signed main()
 {
-    char a[40], b[40];
-    scanf("%s", a);
-    scanf("%s", b);
-    cout << "a: " << a << '\n';
-    cout << "b: " << b << '\n';
-    cout << (isequal(a, b) ? 1 : 0) << '\n';
-    cout << &a << ' ' << &b << '\n';
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    cin >> s;
+    a = fuc(s);
+    for(auto i:a)
+        cout << i << '\n';
     return 0;
 }
