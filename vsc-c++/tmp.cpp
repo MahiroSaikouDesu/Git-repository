@@ -9,7 +9,7 @@ vector<int> a;
 vector<int> fuc(string s)
 {
     vector<int> tmpv;
-    for (int i = 0; i < s.length();i++)
+    for (int i = 0; i < s.length(); i++)
         tmpv.push_back(s[i]);
     return tmpv;
 }
@@ -17,9 +17,7 @@ vector<int> fuc(string s)
 signed main()
 {
     ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    cin >> s;
-    a = fuc(s);
-    for(auto i:a)
-        cout << i << '\n';
+    ll a = 2e5;
+    cout << a * (a - 1) / 2;
     return 0;
 }
