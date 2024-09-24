@@ -19,7 +19,7 @@ void selectsort(vector<int> a, int op) // 0 = less 1 = greater
     {
         int value = a[i], it = i;
         for (int j = i + 1; j < a.size(); j++)
-            value = (op == 1 && value > a[j]) || (op == 0 && value < a[j]) ? it = j, a[j] : value;
+            value = (op == 1 ? value > a[j] : value < a[j]) ? it = j, a[j] : value;
         swap(a[i], a[it]);
         ans[i] = value;
     }
@@ -30,7 +30,6 @@ void selectsort(vector<int> a, int op) // 0 = less 1 = greater
 void insertsort(vector<int> a, int op) // 0 = less 1 = greater
 {
     for (int i = 0; i < a.size(); i++)
-    {
         for (int j = i; j; j--)
             if (op == 1)
             {
@@ -46,7 +45,6 @@ void insertsort(vector<int> a, int op) // 0 = less 1 = greater
                 else
                     break;
             }
-    }
     cout << "insertsort\n";
     print(a);
 }
@@ -73,7 +71,7 @@ void maopaosort(vector<int> a, int op) // 0 = less 1 = greater
     vector<int> ans(a.begin(), a.end());
     for (int i = 0; i < a.size() - 1; i++)
         for (int j = 0; j < a.size() - 1 - i; j++)
-            if ((op == 1 && ans[j] > ans[j + 1]) || (op == 0 && ans[j] < ans[j + 1]))
+            if (op ? ans[j] > ans[j + 1] : ans[j] < ans[j + 1])
                 swap(ans[j], ans[j + 1]);
     cout << "Maopaosort:\n";
     print(ans);
@@ -106,7 +104,7 @@ ll f(string s)
 
 signed main()
 {
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    // ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
 
     // Problem 1
     int n, tmp, op = 0; // n 为数组的个数 || op 为排序方式
