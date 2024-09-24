@@ -1,23 +1,34 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
-typedef pair<int, int> P;
-
-string s;
-vector<int> a;
-
-vector<int> fuc(string s)
+ll C(int n, int m)
 {
-    vector<int> tmpv;
-    for (int i = 0; i < s.length(); i++)
-        tmpv.push_back(s[i]);
-    return tmpv;
+    ll res = 1;
+    m = min(m, n - m);
+    for (int i = 0; i < m; ++i)
+    {
+        res *= (n - i);
+        res /= (i + 1);
+    }
+    return res;
 }
 
-signed main()
+ll f(string s)
 {
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    ll a = 2e5;
-    cout << a * (a - 1) / 2;
+    ll res = 1;
+    for (int i = 1; i < s.length(); i++)
+        res += C(26, i);
+    
+    for (int i = 1; i <= s.length(); i++)
+        for (int j = i == 1 ? 'a' : s[i - 2] + 1; j <= s[i - 1] - 1; j++)
+            res += C('z' - j, s.length() - i);
+
+    return res;
+}
+int main()
+{
+    string s;
+    cin >> s;
+    cout << f(s) << '\n';
     return 0;
 }
