@@ -110,13 +110,12 @@ signed main()
 
     // Problem 1
     int n, tmp, op = 0; // n 为数组的个数 || op 为排序方式
-    cin >> n;
+    cout << "1 is greater and 0 is less\n";
+    cout << "Type the amount of number and sort's operator : \n";
+    cin >> n >> op;
     v.resize(n);
     for (int i = 0; i < n; i++)
         cin >> v[i]; // 输入数组的数字
-    cout << "1 is greater and 0 is less\n"
-         << "Type the way of sort:(1 / 0)\n";
-    cin >> op;
 
     maopaosort(v, op); // 冒泡排序
     heapsort(v, op);   // 堆排序
@@ -142,8 +141,10 @@ signed main()
     cout << '\n';
 
     // Problem 3
+    cout << "Type the string need decode:\n";
     string s;
     cin >> s;
+    transform(s.begin(), s.end(), s.begin(), ::tolower); // 转小写
     cout << f(s) << '\n';
 
     return 0;
