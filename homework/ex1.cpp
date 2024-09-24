@@ -30,21 +30,8 @@ void selectsort(vector<int> a, int op) // 0 = less 1 = greater
 void insertsort(vector<int> a, int op) // 0 = less 1 = greater
 {
     for (int i = 0; i < a.size(); i++)
-        for (int j = i; j; j--)
-            if (op == 1)
-            {
-                if (a[j - 1] > a[j])
-                    swap(a[j - 1], a[j]);
-                else
-                    break;
-            }
-            else
-            {
-                if (a[j - 1] < a[j])
-                    swap(a[j - 1], a[j]);
-                else
-                    break;
-            }
+        for (int j = i, flag = 1; j && flag; j--)
+            flag = (op ? a[j - 1] > a[j] : a[j - 1] < a[j]) ? swap(a[j - 1], a[j]), 1 : 0;
     cout << "insertsort\n";
     print(a);
 }
