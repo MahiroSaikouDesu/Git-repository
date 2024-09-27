@@ -1,34 +1,14 @@
-#include <bits/stdc++.h>
+#include <string.h>
+#include <iostream>
+#include <vector>
 using namespace std;
-#define ll long long
-ll C(int n, int m)
+string s;
+vector<string> v;
+signed main()
 {
-    ll res = 1;
-    m = min(m, n - m);
-    for (int i = 0; i < m; ++i)
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    while (getline(cin, s))
     {
-        res *= (n - i);
-        res /= (i + 1);
+        v.push_back(s);
     }
-    return res;
-}
-
-ll f(string s)
-{
-    ll res = 1;
-    for (int i = 1; i < s.length(); i++)
-        res += C(26, i);
-    
-    for (int i = 1; i <= s.length(); i++)
-        for (int j = i == 1 ? 'a' : s[i - 2] + 1; j <= s[i - 1] - 1; j++)
-            res += C('z' - j, s.length() - i);
-
-    return res;
-}
-int main()
-{
-    string s;
-    cin >> s;
-    cout << f(s) << '\n';
-    return 0;
 }
