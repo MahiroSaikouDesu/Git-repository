@@ -64,27 +64,49 @@ void maopaosort(vector<int> a, int op) // 0 = less 1 = greater
     print(ans);
 }
 
-ll C(int n, int m)
+// 快速幂运算函数，计算a的b次方对p取模的结果
+ll qmi(ll a, ll b, ll p)
 {
     ll res = 1;
-    m = min(m, n - m);
-    for (int i = 0; i < m; ++i)
+    while (b)
     {
-        res *= (n - i);
-        res /= (i + 1);
+        if (b & 1 == 1)
+            res = res * a % p; // 如果b是奇数，则累乘到结果中
+        a = a * a % p;         // a自身平方
+        b >>= 1;               // b右移一位，相当于除以2
     }
     return res;
+}
+// 计算组合数C(a, b)对p取模的结果
+ll C(ll a, ll b, ll p)
+{
+    ll res = 1;
+    for (int i = 1, j = a; i <= b; ++i, --j)
+    {
+        res = res * j % p;                // 计算阶乘部分
+        res = res * qmi(i, p - 2, p) % p; // 计算阶乘的逆元部分
+    }
+
+    return res;
+}
+// Lucas定理，用于计算大组合数取模的问题
+ll lucas(ll a, ll b, ll p)
+{
+    if (a < p && b < p)
+        return C(a, b, p); // 如果a和b都小于p，直接计算C(a, b)
+    else
+        return C(a % p, b % p, p) * lucas(a / p, b / p, p) % p; // 否则，递归计算
 }
 
 ll f(string s)
 {
     ll res = 1;
     for (int i = 1; i < s.length(); i++)
-        res += C(26, i);
+        res += lucas(26, i, 1e9 + 7);
 
     for (int i = 1; i <= s.length(); i++)
         for (int j = i == 1 ? 'a' : s[i - 2] + 1; j <= s[i - 1] - 1; j++)
-            res += C('z' - j, s.length() - i);
+            res += lucas('z' - j, s.length() - i, 1e9 + 7);
 
     return res;
 }
